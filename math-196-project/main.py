@@ -114,15 +114,49 @@ df['Number of cars'].sum()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Since \\(N\\) (our population size) is approximately 22k, our sample size should be no more than \\(22000 \times  .05 = 1100\\). In our case \\(n < .05N\\) so our third requirement is satisfied. We can use a one parameter Z test.
+# MAGIC Since \\(N\\) (our population size) is approximately 22k, our sample size should be no more than \\(22000 \times  .05 = 1100\\). In our case \\(n < .05N\\) so our third requirement is satisfied. We can use a one parameter Z test. 
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC # Approcah
-# MAGIC Use p-value approach
+# MAGIC In this paper, we will compare two computational packages, [statsmodels](https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.proportions_ztest.html) and the TI-84 One-Prop-Z-Test to compute the P-value of obtaining a sample of size 52 with greater than .17 white cars.
+
+# COMMAND ----------
+
+from statsmodels.stats.proportion import proportions_ztest
+
+# COMMAND ----------
+
+test_statistic, p_value = proportions_ztest(15, 52, .17, alternative='larger', prop_var=.17)
+
+# COMMAND ----------
+
+test_statistic
+
+# COMMAND ----------
+
+p_value
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC These numbers match the following output from the TI-84 calculator:
+
+# COMMAND ----------
+
+displayHTML("""<img src='files/shared_uploads/britter6@student.cccd.edu/ztest_1_.jpg'/>""")
+
+# COMMAND ----------
+
+displayHTML("""<img src='files/shared_uploads/britter6@student.cccd.edu/ztest_2_.jpg'/>""")
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC # Conclusion
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Because p < .05, there is sufficient evidence to reject the null hypothesis and support the claim that the proportion of white cars at OCC is greater than .17.
