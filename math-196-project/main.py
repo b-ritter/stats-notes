@@ -154,9 +154,15 @@ displayHTML("""<img src='files/shared_uploads/britter6@student.cccd.edu/ztest_2_
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC Note that the last parameter of `statsmodels` must be set to the proportion of the null hypothesis to match the output of the TI-84. According to the [documentation](https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.proportions_ztest.html):
+# MAGIC > Common use case is to use the proportion under the Null hypothesis to specify the variance of the proportion estimate.
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC # Conclusion
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Because p < .05, there is sufficient evidence to reject the null hypothesis and support the claim that the proportion of white cars at OCC is greater than .17.
+# MAGIC Because p < .05, there is sufficient evidence to reject the null hypothesis and support the claim that the proportion of white cars at OCC is greater than .17. Some factors for this might be due to the warm climate in Southern California. A white car might be cooler than a dark one. White cars also tend to show less dirt which also make them a popular choice.
