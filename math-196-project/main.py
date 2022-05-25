@@ -1,4 +1,9 @@
 # Databricks notebook source
+import seaborn as sns
+sns.set(style="darkgrid")
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC # Project: What Color is Your Car?
 
@@ -41,6 +46,14 @@ display(df,showindex=False)
 # COMMAND ----------
 
 display(df,showindex=False)
+
+# COMMAND ----------
+
+plt.figure(figsize=(10,5))
+plt.title("Count of cars by color in OCC Parking Lots")
+car_bars = sns.barplot(x="Color of car", y="Number of cars", data=df)
+f = car_bars.get_figure()
+f.savefig("/dbfs/FileStore/car_plot.svg")
 
 # COMMAND ----------
 
@@ -171,11 +184,8 @@ displayHTML("""<img src='files/shared_uploads/britter6@student.cccd.edu/ztest_2_
 
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from scipy.stats import norm
 import math
-
-sns.set(style="darkgrid")
 
 min_z, max_z = -4, 4
 x_axis = np.arange(min_z, max_z, 0.001)
@@ -200,4 +210,10 @@ plt.annotate(
     (1,.15), 
     arrowprops={"arrowstyle": "->", "color": "black"}
 )
+f = plt.gcf()
+f.savefig("/dbfs/FileStore/Z_distribution.svg")
 plt.show()
+
+# COMMAND ----------
+
+
