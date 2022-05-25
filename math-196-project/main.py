@@ -166,3 +166,38 @@ displayHTML("""<img src='files/shared_uploads/britter6@student.cccd.edu/ztest_2_
 
 # MAGIC %md
 # MAGIC Because p < .05, there is sufficient evidence to reject the null hypothesis and support the claim that the proportion of white cars at OCC is greater than .17. Some factors for this might be due to the warm climate in Southern California. A white car might be cooler than a dark one. White cars also tend to show less dirt which also make them a popular choice.
+
+# COMMAND ----------
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import norm
+import math
+
+sns.set(style="darkgrid")
+
+min_z, max_z = -4, 4
+x_axis = np.arange(min_z, max_z, 0.001)
+
+critical_region_cutoff = norm.ppf(.95)
+critical_region = np.arange(critical_region_cutoff, max_z, .001)
+
+p_value = np.arange(test_statistic, max_z, .001)
+
+plt.figure(figsize=(15,5))
+plt.fill_between(critical_region, norm.pdf(critical_region), color="lightgray")
+plt.fill_between(p_value, norm.pdf(p_value), color="darkgray")
+plt.plot(x_axis, norm.pdf(x_axis, 0, 1))
+plt.annotate(
+    "Test Statistic", (test_statistic,0), 
+    (3,.15), 
+    arrowprops={"arrowstyle": "->", "color": "black"}
+)
+plt.annotate(
+    "Zα", 
+    (critical_region_cutoff,0), 
+    (1,.15), 
+    arrowprops={"arrowstyle": "->", "color": "black"}
+)
+plt.show()
