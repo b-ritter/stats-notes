@@ -1,6 +1,6 @@
 # Databricks notebook source
 import seaborn as sns
-sns.set(style="darkgrid")
+sns.set(style="whitegrid")
 
 # COMMAND ----------
 
@@ -38,10 +38,6 @@ df = pd.DataFrame(
         "Number of cars": [10, 15, 13,  4,  6,  2,  1,  1]
     }
 )
-
-# COMMAND ----------
-
-display(df,showindex=False)
 
 # COMMAND ----------
 
@@ -100,7 +96,7 @@ displayHTML("""
 # MAGIC %md
 # MAGIC To conduct a one proportion Z test, we need to meet three requirements. 
 # MAGIC 1. Data is SRS
-# MAGIC 1. \\(np(1-p) >= 10\\)
+# MAGIC 1. \\(np_0(1-p_0) >= 10\\)
 # MAGIC 1. \\(n<=.05N \\)
 
 # COMMAND ----------
@@ -120,55 +116,28 @@ df['Number of cars'].sum()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC For our second requirement, \\(p_0 = \frac{15}{52}=0.2884615385\\). 
+# MAGIC For our second requirement, \\(p_0 = .17\\). 
 # MAGIC 
-# MAGIC Since \\(0.2884615385 * (1 - 0.2884615385) = 0.2052514793) <= 10\\) our second requirement is satisfied.
+# MAGIC Since \\(52 \times .17 \times (1-.17)) = < 10\\) our second requirement is _not_ satisfied.
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Since \\(N\\) (our population size) is approximately 22k, our sample size should be no more than \\(22000 \times  .05 = 1100\\). In our case \\(n < .05N\\) so our third requirement is satisfied. We can use a one parameter Z test. 
+# MAGIC Since \\(N\\) (our population size) is approximately 22k, our sample size should be no more than \\(22000 \times  .05 = 1100\\). In our case \\(n < .05N\\) so our third requirement is satisfied. Because the second requirement, failed, we can not use a one parameter Z test and must use the binomial distribution instead. In the actual study, this requirement could be met by increasing the sample size.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC # Approcah
-# MAGIC In this paper, we will compare two computational packages, [statsmodels](https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.proportions_ztest.html) and the TI-84 One-Prop-Z-Test to compute the P-value of obtaining a sample of size 52 with greater than .17 white cars.
+# MAGIC In this paper, we will compare two computational packages, [statsmodels](https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.binom_test.html#statsmodels.stats.proportion.binom_test) and the TI-84 1-binomcdf to compute the P-value of obtaining a sample of size 52 with greater than .17 white cars.
 
 # COMMAND ----------
 
-from statsmodels.stats.proportion import proportions_ztest
+from statsmodels.stats.proportion import binom_test
 
 # COMMAND ----------
 
-test_statistic, p_value = proportions_ztest(15, 52, .17, alternative='larger', prop_var=.17)
-
-# COMMAND ----------
-
-test_statistic
-
-# COMMAND ----------
-
-p_value
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC These numbers match the following output from the TI-84 calculator:
-
-# COMMAND ----------
-
-displayHTML("""<img src='files/shared_uploads/britter6@student.cccd.edu/ztest_1_.jpg'/>""")
-
-# COMMAND ----------
-
-displayHTML("""<img src='files/shared_uploads/britter6@student.cccd.edu/ztest_2_.jpg'/>""")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC Note that the last parameter of `statsmodels` must be set to the proportion of the null hypothesis to match the output of the TI-84. According to the [documentation](https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.proportions_ztest.html):
-# MAGIC > Common use case is to use the proportion under the Null hypothesis to specify the variance of the proportion estimate.
+p_value = 1 - binom_test(15, 52, .17, alternative='smaller')
 
 # COMMAND ----------
 
@@ -179,6 +148,10 @@ displayHTML("""<img src='files/shared_uploads/britter6@student.cccd.edu/ztest_2_
 
 # MAGIC %md
 # MAGIC Because p < .05, there is sufficient evidence to reject the null hypothesis and support the claim that the proportion of white cars at OCC is greater than .17. Some factors for this might be due to the warm climate in Southern California. A white car might be cooler than a dark one. White cars also tend to show less dirt which also make them a popular choice.
+
+# COMMAND ----------
+
+
 
 # COMMAND ----------
 
@@ -193,6 +166,7 @@ x_axis = np.arange(min_z, max_z, 0.001)
 critical_region_cutoff = norm.ppf(.95)
 critical_region = np.arange(critical_region_cutoff, max_z, .001)
 
+test_statistic = norm.ppf(1 - p_value)
 p_value = np.arange(test_statistic, max_z, .001)
 
 plt.figure(figsize=(15,5))
